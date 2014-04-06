@@ -36,10 +36,16 @@ def extract_bits(data, shift, length):
     bitmask = ((1 << length) - 1) << shift
     return ((data & bitmask) >> shift)
 
+
+def dec_to_hex(val):
+    return hex(val).lstrip('0x').rstrip('L').upper()
+
+
 # ==================================================
 
 
-def simpleflake(timestamp=None, random_bits=None, epoch=SIMPLEFLAKE_EPOCH):
+def simpleflake(timestamp=None, random_bits=None, epoch=SIMPLEFLAKE_EPOCH,
+                base_converter=None):
     """Generate a 64 bit, roughly-ordered, globally-unique ID."""
     second_time = timestamp if timestamp is not None else time.time()
     second_time -= epoch
@@ -50,7 +56,10 @@ def simpleflake(timestamp=None, random_bits=None, epoch=SIMPLEFLAKE_EPOCH):
 
     flake = (millisecond_time << SIMPLEFLAKE_TIMESTAMP_SHIFT) + randomness
 
-    return flake
+    if base_converter:
+        return base_converter(flake)
+    else:
+        return flake
 
 
 def parse_simpleflake(flake):

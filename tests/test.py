@@ -10,6 +10,13 @@ class SimpleFlakeTest(unittest.TestCase):
         flake = sf.simpleflake()
         self.assertEquals(64, len(sf.binary(flake)))
 
+    def test_simpleflake_hex(self):
+        flake = sf.simpleflake(base_converter=sf.dec_to_hex)
+        allowed_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                         'A', 'B', 'C', 'D', 'E', 'F']
+        self.assertTrue(set(flake).issubset(allowed_chars))
+        self.assertEquals(64, len(sf.binary(int(flake, 16))))
+
     def test_simpleflake_parts_timestamp(self):
         coolstamp = sf.SIMPLEFLAKE_EPOCH + 1234321.0
         epoch_flake = sf.simpleflake(timestamp=coolstamp)
